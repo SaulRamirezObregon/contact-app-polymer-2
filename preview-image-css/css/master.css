@@ -1,0 +1,22 @@
+.img{
+  width:100%;
+  display:flex;
+  flex-flow:column wrap;
+  justify-content:center;
+}
+
+.preview{
+  border:none;
+  width:25%;
+  height:300px;
+  border-radius:100%;
+}
+
+.selectImage{
+  width:35%;
+}
+
+#myfile{
+  width: 20%;
+  border:none;
+}

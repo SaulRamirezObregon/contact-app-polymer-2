@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>contact-app</title>
+    <meta name="description" content="contact list app">
+
+    <!-- See https://goo.gl/OOhYW5 -->
+    <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet">
+    <link rel="stylesheet" href="/src/css/index.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+    <link rel="manifest" href="/manifest.json">
+    <script src="/bower_components/webcomponentsjs/webcomponents-loader.js"></script>
+    <link rel="import" href="/src/contact-detail/contact-detail.html">
+    <link rel="import" href="/src/list-contact/list-contact.html">
+  </head>
+  <body>
+    <div class="content">
+      <list-contact></list-contact>
+      <contact-detail></contact-detail>
+    </div>
+    <script>
+
+      document.addEventListener('list-contacts',e => {
+        const listContact =  document.querySelector('list-contact'); //OBTENCION DE <list-contact>
+        const contacts = e.detail.contacts;
+        /*
+          ASIGNACIÓN DEL OBJETO A LA PROPIEDAD listcontact de <list-contact>
+        */
+        listContact.setAttribute('listcontact',JSON.stringify(contacts));
+      });
+
+      document.addEventListener('showContact',e => {
+        const contactDetail =  document.querySelector('contact-detail');
+        contactDetail.setAttribute('urlimagecontact',e.detail.contact.url);
+        contactDetail.setAttribute('fullname',e.detail.contact.name);
+        contactDetail.setAttribute('telephonenumber',e.detail.contact.phone);
+        contactDetail.setAttribute('email',e.detail.contact.email);
+        contactDetail.setAttribute('newcontact',"show");
+      });
+
+      document.addEventListener('newContactButton',e =>{
+        const contactDetail =  document.querySelector('contact-detail');
+        console.log('click new button');
+        contactDetail.setAttribute('newcontact',e.detail.click);
+      });
+
+    </script>
+  </body>
+</html>

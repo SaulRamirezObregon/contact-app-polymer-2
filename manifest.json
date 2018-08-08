@@ -1,0 +1,7 @@
+{
+  "name": "contact-app",
+  "short_name": "contact-app",
+  "description": "contact list app",
+  "start_url": "/",
+  "display": "standalone"
+}

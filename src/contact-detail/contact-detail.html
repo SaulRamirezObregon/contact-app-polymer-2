@@ -1,0 +1,225 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<dom-module id="contact-detail">
+  <template>
+    <style>
+    .list-contact-nav{
+      align-self:center;
+      width:100%;
+      height:12%;
+      background: #2196F3;
+      border-radius:10px 10px 0px 0px;
+    }
+    /*.contact-name{
+      align-self: center;
+      font-family: 'Poppins', sans-serif;
+      font-size:25px;
+      color:white;
+      font-weight: bold;
+      text-align: center;
+      margin-left: 30px;
+    }*/
+    .pic-contact{
+      width: 100%;
+      display: flex;
+      height: 40%;
+      flex-flow: column wrap;
+      justify-content: center;
+    }
+    .img-contact{
+      align-self: center;
+      width: 32%;
+      height: 80%;
+      border-radius: 100%;
+    }
+    .form-contact{
+      width: 100%;
+      height: 40%;
+      display: flex;
+      flex-flow: column wrap;
+    }
+    .inputs-contact{
+      align-self: center;
+      width: 80%;
+      height: 30px;
+      border:none;
+      border-bottom: 1px solid gray;
+      margin-bottom: 20px;
+    }
+    #btnAdd{
+      align-self: center;
+      width: 30%;
+      height: 100%;
+      border: none;
+      border-radius: 5px;
+      background:#2196F3;
+      color: white;
+      font-family: 'Poppins', sans-serif;
+      font-size: 20px;
+    }
+
+    #btnAdd:hover{
+      background: white;
+      color: #2196F3;
+      border: 1px solid #2196F3;
+      font-weight: bold;
+    }
+    #icon-bar{
+      margin-left:20px;
+      align-self:center;
+      color:white;
+      font-size:50px;
+      width:30%;
+    }
+    .action-form{
+      width: 100%;
+      height: 40px;
+      display: flex;
+      flex-flow: column wrap;
+    }
+    .selectImage{
+      width:65%;
+      height: 5%;
+      align-self: center;
+    }
+    .newcontact{
+      display:block;
+    }
+    .showcontact{
+      display:none;
+    }
+
+    #myfile{
+      width: 20%;
+      border:none;
+    }
+    </style>
+
+    <div class="list-contact-nav">
+      <!--<span class="ccontact-detailontact-name">Saúl Ramírez Obregón.</span>-->
+    </div>
+    <div class="pic-contact">
+      <img src="[[urlimagecontact]]" alt="image-contact" class="img-contact" id="imgContact">
+    </div>
+    <span class="selectImage" id="upload">
+      Cambiar imagen
+      <input type="file" id="myFile" name="myfile" on-change="previewImage">
+    </span>
+    <div class="form-contact">
+      <input type="text" class="inputs-contact" id="fullName"  placeholder="Tu nombre aquí..." value="[[fullname]]">
+      <input type="tel" class="inputs-contact" id="telephoneNumber"  placeholder="Número telefónico..."value="[[telephonenumber]]">
+      <input type="email" class="inputs-contact" id="email"  placeholder="correo@dominio.com"value="[[email]]">
+      <div class="action-form">
+        <button type="button" name="button" id="btnAdd" on-click="addContact">Añadir</button>
+      </div>
+    </div>
+
+  </template>
+
+  <script>
+    class ContactDetail extends Polymer.Element{
+      static get is(){return 'contact-detail';}
+      static get properties(){
+        return{
+          urlimagecontact : {
+            type: String,
+            value : 'https://x1.xingassets.com/assets/frontend_minified/img/users/nobody_m.original.jpg'
+          },
+          fullname:{
+            type:String,
+            value:'',
+          },
+          telephonenumber:{
+            type:String,
+            value:''
+          },
+          email:{
+            type:String,
+            value:''
+          },
+          contacts :{
+            type:Array,
+            value:[]
+          },
+          newcontact:{
+            type: String,
+            value:'',
+            observer:'_newcontactChanged'
+          }
+        }
+      }
+
+      //OBTENCIÓN DE LA DATA DEL FORM Y CARGA EN EL ARRAY
+      /*
+        addContact(), Se ejecuta cuando da clic en el botón Añadir
+      */
+      addContact(){
+        const name = this.$.fullName;
+        const phone =this.$.telephoneNumber;
+        const email = this.$.email;
+
+        //VALIDACIÓN DE LOS INPUTS
+        if(name.value !='' && phone.value!=''&& email.value !=''){
+          const contact = {};
+          //OBTENCIÓN DE LA DATA
+          contact.name=name.value;
+          contact.phone =phone.value;
+          contact.email = email.value;
+          contact.url = this.$.imgContact.src;
+          this.contacts.push(contact); //CARGA EN EL ARRAY DE LOS OBJETOS EN EL ARRAY
+          this.cleanInputs(this.$.imgContact,name,phone,email,this.$.myFile);
+        }else{
+          alert('¡llena todos los campos!');
+        }
+
+        //ENVÍO DEL ARRAY DE OBJETOS MEDIANTE UN CUSTOM EVENT
+        this.dispatchEvent(new CustomEvent('list-contacts',{
+          bubbles:true,
+          composed:true,
+          detail:{
+            contacts:this.contacts
+          }
+        }))
+
+      }
+
+      //LIMPIAR INPUTS
+      cleanInputs(img,...inputs){
+        img.src=this.urlimagecontact;
+        return inputs.forEach(input => input.value='');
+      }
+
+      //MUESTRA DE IMAGÉN SELECCIONADA
+      previewImage(){
+        const imgContact = this.$.imgContact;
+        const upload = this.$.myFile;
+        const reader = new FileReader();
+        reader.onload = e => imgContact.setAttribute('src', e.target.result);
+        reader.readAsDataURL(upload.files[0]);
+      }
+
+      _newcontactChanged(newValue,oldValue){
+        if(this.newcontact==="add"){
+          this.removeClassToInputs('showcontact',this.$.btnAdd,this.$.upload);
+          this.addClassToInputs('newcontact',this.$.btnAdd,this.$.upload);
+          this.urlimagecontact='https://x1.xingassets.com/assets/frontend_minified/img/users/nobody_m.original.jpg';
+          this.cleanInputs(this.$.imgContact,this.$.fullName,this.$.telephoneNumber,this.$.email,this.$.myFile);
+
+          console.log('cambió!',this.newcontact);
+        }if(this.newcontact==="show"){
+          this.removeClassToInputs('newcontact',this.$.btnAdd,this.$.upload);
+          this.addClassToInputs('showcontact',this.$.btnAdd,this.$.upload);
+          console.log('cambió!',this.newcontact);
+        }
+      }
+
+      addClassToInputs(Class,...inputs){
+        inputs.forEach(input=>input.classList.add(Class))
+      }
+      removeClassToInputs(Class,...inputs){
+        inputs.forEach(input=>input.classList.remove(Class))
+      }
+    }
+    window.customElements.define(ContactDetail.is,ContactDetail);
+  </script>
+</dom-module>

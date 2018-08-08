@@ -1,0 +1,145 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<dom-module id="list-contact">
+  <template>
+    <style>
+    .list-contact-nav{
+      align-self:center;
+      width:100%;
+      height:12%;
+      background:#2196F3;
+      border-radius:10px 10px 0px 0px;
+      display:flex;
+    }
+    #icon-bar{
+      margin-left:20px;
+      align-self:center;
+      color:white;
+      font-size:50px;
+      width:30%;
+    }
+    .title-nav{
+      align-self:center;
+      font-family: 'Poppins', sans-serif;
+      font-size:25px;
+      color:white;
+      font-weight: bold;
+    }
+    .contact-list{
+      width: 100%;
+      overflow-x:scroll;
+      display: flex;
+      flex-flow: column wrap;
+      height:490px;
+      justify-content: flex-start;
+    }
+    .contact{
+      margin-top: 20px;
+      margin-left: 5px;
+      align-self: flex-start;
+      width: 60%;
+      display: flex;
+      flex-flow: row wrap;
+      cursor:pointer;
+      justify-content: space-around;
+    }
+    .contact:hover{
+      border-radius: 5px;
+      border-left: 10px solid #2196F3;
+    }
+    .imgprofile{
+      width: 10%;
+      display: flex;
+      flex-flow: column;
+      justify-content: center;
+    }
+    .picprofile{
+      width: 95%;
+      height: 35px;
+      border-radius: 100%;
+    }
+    .phonenumber{
+      width: 80%;
+      display: flex;
+      flex-flow: column;
+      justify-content: center;
+    }
+    .phone{
+      font-family: 'Poppins', sans-serif;
+    }
+    .phone:hover{
+      font-weight: bold;
+    }
+    #btnNew{
+      margin-left: 20%;
+      cursor: pointer;
+    }
+    #btnNew:hover{
+      text-shadow: 2px 2px 6px black;
+    }
+    </style>
+    <div class="list-contact-nav" id="listContactNav">
+      <span id="icon-bar"><i class="fas fa-bars"></i></span>
+      <span class="title-nav">Lista de contactos</span><span class="title-nav" id="btnNew">+</span>
+    </div>
+    <div class="contact-list" id="contentList">
+    </div>
+  </template>
+  <script>
+    class listContact extends Polymer.Element{
+      static get is(){return 'list-contact';}
+      static get properties(){
+        return{
+          listcontact :{
+            type:Array,
+            value:[],
+            observer:'_listcontactChanged'
+          }
+        };
+      }
+      _listcontactChanged(newValue,oldValue){
+        if(this.listcontact.length != 0){
+            this.$.contentList.innerHTML+=`
+              <div class="contact">
+                <div class="imgprofile">
+                  <img src="${this.listcontact[this.listcontact.length-1].url}" alt="picture contact" class="picprofile"></img>
+                </div>
+              <div class="phonenumber">
+                <!--this.listcontact[this.listcontact.length-1], obtengo el último agregado-->
+                <span class="phone" data='${JSON.stringify(this.listcontact[this.listcontact.length-1])}'>${this.listcontact[this.listcontact.length-1].name}    ${this.listcontact[this.listcontact.length-1].phone}</span>
+              </div>
+            </div>
+            `
+        }
+
+        //IDENTIFICACIÓN DEL CONTACTO CLICKEADO Y ENVÍO DEL ARRAY
+        this.$.contentList.addEventListener('click',(e)=>{
+          const target =e.target;
+          if(target.tagName ==="SPAN"){
+            const object = target.getAttribute('data');
+            this.$.contentList.dispatchEvent(new CustomEvent('showContact',{
+              bubbles:true,
+              composed:true,
+              detail:{
+                contact: JSON.parse(object)
+              }
+            }))
+          }
+        })
+
+        this.$.btnNew.addEventListener('click',(e)=>{
+          this.$.btnNew.dispatchEvent(new CustomEvent('newContactButton',{
+            bubbles:true,
+            composed:true,
+            detail:{
+              click: "add"
+            }
+          }))
+        })
+
+      }
+
+    }
+    window.customElements.define(listContact.is,listContact);
+  </script>
+</dom-module>

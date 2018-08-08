@@ -1,0 +1,24 @@
+*{
+  margin: 0;
+  padding: 0;
+}
+body{
+    background:gray;
+}
+.content{
+  width:100%;
+  display:flex;
+  flex-flow:column wrap;
+  justify-content:center;
+  height:600px;
+}
+
+contact-detail, list-contact{
+  align-self:center;
+  width:47%;
+  height:95%;
+  border-radius:2%;
+  display:flex;
+  flex-flow:column wrap;
+  background:white;
+}
